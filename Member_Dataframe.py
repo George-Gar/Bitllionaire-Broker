@@ -17,6 +17,7 @@ class Member_Data():
         # return self.user_df
     
     def update_keys(self, id, live_key, live_secret, sandbox_key, sandbox_secret):
+        '''id param will only be used for indexing'''
         self.user_df.at[id, 'Live_Key'] = str(live_key)
         self.user_df.at[id, 'Live_Secret'] = str(live_secret)
         self.user_df.at[id, 'Sandbox_Key'] = str(sandbox_key)
