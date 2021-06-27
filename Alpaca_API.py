@@ -26,7 +26,7 @@ class Alpaca_Account:
             return
     
 
-    async def order(self, side, symbol, qty, type = 'market', tif = 'gtc', funds = False, live = True):
+    async def send_order(self, side, symbol, qty, type = 'market', tif = 'gtc', funds = False, live = True):
         
         #qty of shares in live acct
         if funds == False and live == True: 
