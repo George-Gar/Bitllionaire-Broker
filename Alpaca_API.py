@@ -90,3 +90,18 @@ class Alpaca_Account:
                     async with session.get(f'{self.paper_url}v2/orders/{id}') as request:
                         await request
         return
+    
+
+    async def get_asset(self, symbol, live = True):
+        #live account
+        if live == True:
+            async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{self.live_url}v2/assets/{symbol.upper()}') as request:
+                        await request
+        
+        #paper account
+        if live == False:
+            async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{self.paper_url}v2/assets/{symbol.upper()}') as request:
+                        await request
+        return
