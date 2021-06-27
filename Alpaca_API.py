@@ -11,23 +11,24 @@ class Alpaca_Account:
         self.live_secret = live_secret
         self.sandbox_key = sandbox_key
         self.sandbox_secret = sandbox_secret
-        self.live_url = 'https://api.alpaca.markets'
-        self.paper_url = 'https://paper-api.alpaca.markets'
+        self.live_url = 'https://api.alpaca.markets/'
+        self.paper_url = 'https://paper-api.alpaca.markets/'
     
 
-    async def get_account(self, acct_type):
+    async def get_account(self, live = True):
         '''This param/arg will be determined by the prefix in the discord module. If the user chooses the live prefix
-        we will call this function with the string "live". If they choose the paper prefix we will pass "Paper". '''
+        live == True, if they choose the paper prefix live == False'''
 
-        if acct_type == 'live':
+        if live == True:
             return
         
-        elif acct_type == 'paper':
+        elif live == False:
             return
     
 
     async def order(self, side, symbol, qty, type = 'market', tif = 'gtc', funds = False, live = True):
         
+        #qty of shares in live acct
         if funds == False and live == True: 
             if side == 'sell':
                 return
@@ -35,6 +36,7 @@ class Alpaca_Account:
             elif side == 'buy':
                 return
         
+        #dollar amt worth of shares in live acct
         elif funds == True and live == True:
             if side == 'sell':
                 return
@@ -42,6 +44,7 @@ class Alpaca_Account:
             elif side == 'buy':
                 return
         
+        #qty of shares in paper acct
         elif funds == False and live == False:
             if side == 'sell':
                 return
@@ -49,6 +52,7 @@ class Alpaca_Account:
             elif side == 'buy':
                 return
         
+        #dollar amt worth of shares in paper acct
         elif funds == True and live == False:
             if side == 'sell':
                 return
@@ -56,3 +60,33 @@ class Alpaca_Account:
             elif side == 'buy':
                 return
         return 
+    
+   
+    async def get_orders(self, live = True):
+        #live account
+        if live == True:
+            async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{self.live_url}v2/orders') as request:
+                        await request
+        
+        #paper account
+        if live == False:
+            async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{self.paper_url}v2/orders') as request:
+                        await request
+        return
+    
+
+    async def get_order(self, id, live = True):
+        #live account
+        if live == True:
+            async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{self.live_url}v2/orders/{id}') as request:
+                        await request
+        
+        #paper account
+        if live == False:
+            async with aiohttp.ClientSession() as session:
+                    async with session.get(f'{self.paper_url}v2/orders/{id}') as request:
+                        await request
+        return
