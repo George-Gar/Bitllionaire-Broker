@@ -18,16 +18,21 @@ class Alpaca_Account:
         self.responses_dict = {} #universal dict for storing responses to send back to user
     
 
-    async def get_account(self, live = True):
+    async def get_account(self, live=True):
         '''This param/arg will be determined by the prefix in the discord module. If the user chooses the live prefix
         live == True, if they choose the paper prefix live == False'''
 
         if live == True:
-            url = f'{self.live_url}/v2/account'
-            return
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                    async with session.get(f'{self.live_url}/v2/account') as resp:
+                        response = await resp.json()
+                        print(response)
         
         elif live == False:
-            url = f'{self.paper_url}/v2/account'
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                    async with session.get(f'{self.paper_url}/v2/account') as resp:
+                        response = await resp.json()
+                        print(response)
             return
     
 
@@ -35,9 +40,9 @@ class Alpaca_Account:
         
         #if limit isn't specified it will default as a market order
         if limit == 0:
-            data = {'symbol': symbol, 'qty': qty, 'side': side, 'type': 'market', 'time_in_force': tif}
+            data = {'symbol': symbol.upper(), 'qty': qty, 'side': side, 'type': 'market', 'time_in_force': tif}
         else:
-            data = {'symbol': symbol, 'qty': qty, 'side': side, 'type': 'limit', 'time_in_force': tif, 'limit_price': limit}
+            data = {'symbol': symbol.upper(), 'qty': qty, 'side': side, 'type': 'limit', 'time_in_force': tif, 'limit_price': limit}
         
         #live account post request
         if live == True: 
@@ -71,55 +76,60 @@ class Alpaca_Account:
                         print(response)
                  
    
-    async def get_orders(self, live = True):
+    async def get_orders(self, live=True):
         #live account
         if live == True:
-            async with aiohttp.ClientSession() as session:
-                    async with session.get(f'{self.live_url}v2/orders') as request:
-                        await request
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                    async with session.get(f'{self.live_url}/v2/orders') as resp:
+                        response = await resp.json()
+                        print(response)
         
         #paper account
         if live == False:
-            async with aiohttp.ClientSession() as session:
-                    async with session.get(f'{self.paper_url}v2/orders') as request:
-                        await request
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                    async with session.get(f'{self.paper_url}/v2/orders') as resp:
+                        response = await resp.json()
+                        print(response)
         return
     
 
     async def get_order(self, id, live = True):
         #live account
         if live == True:
-            async with aiohttp.ClientSession() as session:
-                    async with session.get(f'{self.live_url}v2/orders/{id}') as request:
-                        await request
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                    async with session.get(f'{self.live_url}/v2/orders/{id}') as resp:
+                        response = await resp.json()
+                        print(response)
         
         #paper account
         if live == False:
-            async with aiohttp.ClientSession() as session:
-                    async with session.get(f'{self.paper_url}v2/orders/{id}') as request:
-                        await request
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                    async with session.get(f'{self.paper_url}/v2/orders/{id}') as resp:
+                        response = await resp.json()
+                        print(response)
         return
     
 
     async def get_asset(self, symbol, live = True):
         #live account
         if live == True:
-            async with aiohttp.ClientSession() as session:
-                    async with session.get(f'{self.live_url}v2/assets/{symbol.upper()}') as request:
-                        await request
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                    async with session.get(f'{self.live_url}/v2/assets/{symbol.upper()}') as resp:
+                        response = await resp.json()
+                        print(response)
         
         #paper account
         if live == False:
-            async with aiohttp.ClientSession() as session:
-                    async with session.get(f'{self.paper_url}v2/assets/{symbol.upper()}') as request:
-                        await request
-        return
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                    async with session.get(f'{self.paper_url}/v2/assets/{symbol.upper()}') as resp:
+                        response = await resp.json()
+                        print(response)
 
 
 
 a = Alpaca_Account(1, 'AKONGGIJ6V3OMHMIGHON', 'Bf65kFJS0OixniK71p91GB0EPI0W0YKxAgSLmL7n', 'PKM63NQX8JLSSN76IM6P', 'Xs15aW1jXzLHI2duQ6QjyRNsFtIP34rOEDbCgGH8')
 
-asyncio.run(a.send_order('buy', 'AAPL', 2, 120, live=False))
+asyncio.run(a.get_account(live=False))
 # data = {'symbol': 'AAPL', 'qty': 2, 'side': 'buy', 'type': 'market', 'time_in_force': 'gtc'}
 # url = f'{a.paper_url}/v2/orders'
 # r = requests.post(url, headers = a.paper_headers, json=data)
