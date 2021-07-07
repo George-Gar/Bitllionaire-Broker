@@ -76,18 +76,20 @@ class Alpaca_Account:
                         print(response)
                  
    
-    async def get_orders(self, live=True):
+    async def get_orders(self, status='open', live=True):
+
+        data = {'status': status}
         #live account
         if live == True:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
-                    async with session.get(f'{self.live_url}/v2/orders') as resp:
+                    async with session.get(f'{self.live_url}/v2/orders', json=data) as resp:
                         response = await resp.json()
                         print(response)
         
         #paper account
         if live == False:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
-                    async with session.get(f'{self.paper_url}/v2/orders') as resp:
+                    async with session.get(f'{self.paper_url}/v2/orders', json=data) as resp:
                         response = await resp.json()
                         print(response)
         return
@@ -129,7 +131,7 @@ class Alpaca_Account:
 
 a = Alpaca_Account(1, 'AKONGGIJ6V3OMHMIGHON', 'Bf65kFJS0OixniK71p91GB0EPI0W0YKxAgSLmL7n', 'PKM63NQX8JLSSN76IM6P', 'Xs15aW1jXzLHI2duQ6QjyRNsFtIP34rOEDbCgGH8')
 
-asyncio.run(a.get_account(live=False))
+asyncio.run(a.get_orders('closed', live=False))
 # data = {'symbol': 'AAPL', 'qty': 2, 'side': 'buy', 'type': 'market', 'time_in_force': 'gtc'}
 # url = f'{a.paper_url}/v2/orders'
 # r = requests.post(url, headers = a.paper_headers, json=data)
