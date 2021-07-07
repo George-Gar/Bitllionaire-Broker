@@ -1,5 +1,6 @@
 import asyncio, aiohttp, json, requests
 import datetime as datetime
+import pprint as p
 
 class Alpaca_Account:
     '''This class will have everything to do with the users account including placing orders'''
@@ -91,7 +92,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.get(f'{self.paper_url}/v2/orders', json=data) as resp:
                         response = await resp.json()
-                        print(response)
+                        p.pprint(response)
         return
     
 
@@ -131,7 +132,7 @@ class Alpaca_Account:
 
 a = Alpaca_Account(1, 'AKONGGIJ6V3OMHMIGHON', 'Bf65kFJS0OixniK71p91GB0EPI0W0YKxAgSLmL7n', 'PKM63NQX8JLSSN76IM6P', 'Xs15aW1jXzLHI2duQ6QjyRNsFtIP34rOEDbCgGH8')
 
-asyncio.run(a.get_orders('closed', live=False))
+asyncio.run(a.get_orders('open',live=False))
 # data = {'symbol': 'AAPL', 'qty': 2, 'side': 'buy', 'type': 'market', 'time_in_force': 'gtc'}
 # url = f'{a.paper_url}/v2/orders'
 # r = requests.post(url, headers = a.paper_headers, json=data)
