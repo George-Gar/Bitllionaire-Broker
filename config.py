@@ -1,0 +1,4 @@
+l_key = 'AKONGGIJ6V3OMHMIGHON'
+l_secret = 'Bf65kFJS0OixniK71p91GB0EPI0W0YKxAgSLmL7n'
+p_key = 'PKEX2D0KVRFV93NRQT3X'
+p_secret = 'PPj72s2LPYnhRhYvWpkYfh9FUrqogMNZsVMobIrG'
