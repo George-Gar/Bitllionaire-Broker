@@ -203,10 +203,4 @@ class Alpaca_Account:
 
 a = Alpaca_Account(1, l_key, l_secret, p_key, p_secret)
 if __name__ == '__main__':
-    asyncio.run(a.get_position('aapl', live=False))
-    # print(a.entry_price)
-    # asyncio.run(a.stop_loss('aapl', 2, .90, live=False))
-    # data = {'symbol': 'AAPL', 'qty': 2, 'side': 'buy', 'type': 'market', 'time_in_force': 'gtc'}
-    # url = f'{a.paper_url}/v2/orders'
-    # r = requests.post(url, headers = a.paper_headers, json=data)
-    # print(r.json())
+    asyncio.run(a.stop_loss('aapl',6, .90, live=False))
