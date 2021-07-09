@@ -22,6 +22,7 @@ class Alpaca_Account:
         self.entry_price = ''
         self.side = ''
 
+
     async def get_account(self, live=True):
         '''This param/arg will be determined by the prefix in the discord module. If the user chooses the live prefix
         live == True, if they choose the paper prefix live == False'''
