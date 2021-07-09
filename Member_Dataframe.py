@@ -10,6 +10,8 @@ class Member_Data():
 
     #update rows, index, and values
     def update_id(self, id, name):
+        '''This class will be called when a user first joins the server, it will capture their name and id'''
+
         self.user_df = pd.DataFrame(self.user_df.append({"ID": id, "Name": name, "Live_Key": '', "Live_Secret": '', "Paper_Key": '', "Paper_Secret": ''}, ignore_index=True))
         self.user_df.index = [item for item in self.user_df['ID']]
         print(self.user_df)
@@ -17,7 +19,10 @@ class Member_Data():
         # return self.user_df
     
     def update_keys(self, id, live_key, live_secret, paper_key, paper_secret):
-        '''id param will only be used for indexing'''
+        '''id param will only be used for indexing
+        This class will be called when a user dms the bot the proper command to store its alpaca keys. it will find 
+        them in the dataframe by id and add the alpaca keys to  the proper panda column via arg order.
+        '''
         self.user_df.at[id, 'Live_Key'] = str(live_key)
         self.user_df.at[id, 'Live_Secret'] = str(live_secret)
         self.user_df.at[id, 'Paper_Key'] = str(paper_key)
