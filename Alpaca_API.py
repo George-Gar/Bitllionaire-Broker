@@ -133,6 +133,69 @@ class Alpaca_Account:
         self.side = response['side']
     
 
+    async def get_all_positions(self, live=True):
+        
+        #live account
+        if live == True:
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                    async with session.get(f'{self.live_url}/v2/positions') as resp:
+                        response = await resp.json()
+                        print(response)
+        
+        #paper account
+        if live == False:
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                    async with session.get(f'{self.paper_url}/v2/positions') as resp:
+                        response = await resp.json()
+                        p.pprint(response)
+
+
+    async def close_position(self, symbol, qty=0, live=True):
+            
+            #live account
+            if live == True:
+
+                if '%' not in str(qty) and qty != 0:
+                    url = f'{self.live_url}/v2/positions/{symbol.upper()}?qty={qty}'
+                else:
+                    url = f'{self.live_url}/v2/positions/{symbol.upper()}'
+                
+                async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                        async with session.delete(url) as resp:
+                            response = await resp.json()
+                            print(response)
+            
+            #paper account
+            if live == False:
+
+                if '%' not in str(qty) and qty != 0:
+                    url = f'{self.paper_url}/v2/positions/{symbol.upper()}?qty={qty}'
+                else:
+                    url = f'{self.paper_url}/v2/positions/{symbol.upper()}'
+                
+                async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                        async with session.delete(url) as resp:
+                            response = await resp.json()
+                            p.pprint(response)
+
+
+    async def close_all_positions(self, live=True):
+        
+        #live account
+        if live == True:
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                    async with session.delete(f'{self.live_url}/v2/positions') as resp:
+                        response = await resp.json()
+                        print(response)
+        
+        #paper account
+        if live == False:
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                    async with session.delete(f'{self.paper_url}/v2/positions') as resp:
+                        response = await resp.json()
+                        p.pprint(response)
+
+
     async def get_order(self, id, live = True):
         #live account
         if live == True:
@@ -203,4 +266,4 @@ class Alpaca_Account:
 
 a = Alpaca_Account(1, l_key, l_secret, p_key, p_secret)
 if __name__ == '__main__':
-    asyncio.run(a.stop_loss('aapl',6, .90, live=False))
+    asyncio.run(a.close_position('aapl', live=False))
