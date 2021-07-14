@@ -10,7 +10,7 @@ class Member_Data():
     def __init__(self):
         #create dictionary
         self.user_df = pd.DataFrame()
-        self.user_dictionary ={} #dictionary version of the dataframe that we write to the csv file
+        self.user_dictionary = {} #dictionary version of the dataframe that we write to the csv file
 
     #update rows, index, and values
     async def update_id(self, id, name):
