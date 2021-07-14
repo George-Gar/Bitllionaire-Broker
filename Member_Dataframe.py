@@ -5,7 +5,7 @@ import aiofiles
 import json
 from aiocsv import AsyncReader, AsyncDictReader, AsyncWriter, AsyncDictWriter
 
-class Member_Data():
+class Member_Alpaca_Data():
 
     def __init__(self):
         #create dictionary
@@ -75,16 +75,16 @@ class Member_Data():
             await f.write(json.dumps(self.user_dictionary))
 
 
-
-users = Member_Data()
-# print(users.user_df)
-asyncio.run(users.update_id(str(125), 'george'))
-# asyncio.run(users.update_id(str(126), 'george'))
-# # print('\n')
-asyncio.run(users.update_keys(str(125), 1, 1, 1, 1))
-# asyncio.run(users.update_keys(str(124), 1, 1, 1, 1))
-# users.base_df()
-# print(users.updated_df('g'))
-# print(users.updated_df('gg'))
-# print(users.user_df)
-# asyncio.run(users.read_csv())
+if __name__ == '__main__':
+    users = Member_Alpaca_Data()
+    # print(users.user_df)
+    asyncio.run(users.update_id(str(125), 'george'))
+    # asyncio.run(users.update_id(str(126), 'george'))
+    # # print('\n')
+    asyncio.run(users.update_keys(str(125), 1, 1, 1, 1))
+    # asyncio.run(users.update_keys(str(124), 1, 1, 1, 1))
+    # users.base_df()
+    # print(users.updated_df('g'))
+    # print(users.updated_df('gg'))
+    # print(users.user_df)
+    # asyncio.run(users.read_csv())

@@ -351,7 +351,8 @@ class Alpaca_Account:
                         print(response)
 
 
-a = Alpaca_Account(1, l_key, l_secret, p_key, p_secret)
+
 if __name__ == '__main__':
+    a = Alpaca_Account(1, l_key, l_secret, p_key, p_secret)
     asyncio.run(a.send_order('buy', 'aapl', 5, live=False))
     asyncio.run(a.cancel_order('aapl',live=False))
