@@ -25,6 +25,15 @@ async def add(ctx):
     await member.update_id(author.id, author.name)
     return
 
+@client.command(name='register')
+async def add(ctx, live_key, live_secret, paper_key, paper_secret):
+    #create instance of member_alpaca_data class
+    member = Member_Alpaca_Data()
+    #create the author object
+    author = ctx.message.author
+    await member.update_keys(author.id, live_key, live_secret, paper_key, paper_secret)
+    return
+
 
 
 
