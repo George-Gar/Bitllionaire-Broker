@@ -12,7 +12,7 @@ bit_screener = client.get_channel(842046148108746803)
 async def buy(ctx):
     #create instance of member_alpaca_data class
     member = Member_Alpaca_Data()
-    member.read_csv()
+    await member.read_csv()
     print(member.user_dictionary) 
     return
 
