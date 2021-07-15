@@ -67,6 +67,7 @@ class Member_Alpaca_Data():
             self.user_dictionary = await f.read()
             if self.user_dictionary:
                 self.user_dictionary = json.loads(self.user_dictionary)
+            return self.user_dictionary
             
     
     
