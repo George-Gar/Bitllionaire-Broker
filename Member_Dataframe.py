@@ -25,7 +25,7 @@ class Member_Alpaca_Data():
             #create nested dict
             self.user_dictionary[id] = {}
             #update nested dict
-            self.user_dictionary[id]['id'] = id
+            self.user_dictionary[id]['id'] = str(id)
             self.user_dictionary[id]['name'] = name
         
     
@@ -33,7 +33,7 @@ class Member_Alpaca_Data():
             #create nested dict
             self.user_dictionary[id] = {}
             #update nested dict
-            self.user_dictionary[id]['id'] = id
+            self.user_dictionary[id]['id'] = str(id)
             self.user_dictionary[id]['name'] = name
         
         await self.update_csv()

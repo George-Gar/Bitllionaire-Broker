@@ -34,14 +34,14 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                     async with session.get(f'{self.live_url}/v2/account') as resp:
                         response = await resp.json()
-                        print(response)
+                        
         
         elif live == False:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.get(f'{self.paper_url}/v2/account') as resp:
                         response = await resp.json()
-                        print(response)
-            return
+        self.response_dict = response             
+            
     
 
     async def get_quote(self, symbol):

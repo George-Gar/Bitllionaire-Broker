@@ -34,7 +34,17 @@ async def add(ctx, live_key, live_secret, paper_key, paper_secret):
     await member.update_keys(str(author.id), live_key, live_secret, paper_key, paper_secret)
     return
 
-
+@client.command(name='account')
+async def add(ctx, live_key, live_secret, paper_key, paper_secret):
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['id'], member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    await broker.get_account()
+    return
 
 
 
