@@ -144,6 +144,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                     async with session.get(f'{self.live_url}/v2/positions') as resp:
                         response = await resp.json()
+                        self.response_dict = response
                         print(response)
         
         #paper account
@@ -151,6 +152,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.get(f'{self.paper_url}/v2/positions') as resp:
                         response = await resp.json()
+                        self.response_dict = response
                         p.pprint(response)
 
 
