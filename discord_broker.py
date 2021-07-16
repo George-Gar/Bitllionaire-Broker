@@ -46,7 +46,10 @@ async def account(ctx, live=True):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    await broker.get_account(live=live)
+    if ctx.channel.id == 863095775407505478:
+        await broker.get_account(live=live)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.get_account(live=False)
     
     #create the embed
     broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
