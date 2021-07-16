@@ -113,19 +113,20 @@ async def positions(ctx):
     elif ctx.channel.id == 863095208819294278:
         await broker.get_all_positions(live=False)
     
-    #create the embed
-    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
-    for key in broker.response_dict:
-        broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
-    
-    #add footer and thumbnail
-    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
-    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
-    text="The Bitllionaire's Club. Formula-X LLC")
-    
-    #send the embed
-    await ctx.message.author.send(embed=broker_embed)
-
+    #create a for loop that parses the response and creates the embed
+    for item in broker.response_dict:
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for key in item:
+            broker_embed.add_field(name=key, value=f'{item[key]}\n', inline=False)
+ 
+        #add footer and thumbnail
+        broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+        broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+        text="The Bitllionaire's Club. Formula-X LLC")
+        
+        #send the embed
+        await ctx.message.author.send(embed=broker_embed)
+        # break
 
 
 
