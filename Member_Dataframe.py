@@ -43,7 +43,7 @@ class Member_Alpaca_Data():
     async def update_keys(self, id, live_key, live_secret, paper_key, paper_secret):
         '''id param will only be used for indexing
         This class will be called when a user dms the bot the proper command to store its alpaca keys. it will find 
-        them in the dataframe by id and add the alpaca keys to  the proper panda column via arg order.
+        them in the dataframe by id and add the alpaca keys to the proper dictionary via arg order.
         '''
 
         #read in the full file and convert the dictionary into a pandas df
@@ -61,6 +61,8 @@ class Member_Alpaca_Data():
     
     
     async def read_csv(self):
+        '''function for asynchronously reading the dataframe'''
+
         async with aiofiles.open('members_alpaca.csv', 'r') as f:
             self.user_dictionary = await f.read()
             
@@ -73,6 +75,8 @@ class Member_Alpaca_Data():
     
     
     async def update_csv(self):
+        '''function for asynchronously writing to the dataframe'''
+        
         async with aiofiles.open('members_alpaca.csv', 'w') as f:
             await f.write(json.dumps(self.user_dictionary))
 
