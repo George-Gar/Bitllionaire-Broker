@@ -18,25 +18,23 @@ class Member_Alpaca_Data():
 
         await self.read_csv()
         
-        #conditions for if there are values in the file
-        if self.user_dictionary:
-            #read dict into pandas, add new users, convert pandas to dict, write to csv
-            self.user_df = pd.DataFrame.from_records(self.user_dictionary)
-            self.user_df = pd.DataFrame(self.user_df.append({"ID": str(id), "Name": name, "Live_Key": '', "Live_Secret": '', "Paper_Key": '', "Paper_Secret": ''}, ignore_index=True))
-            #set the index to the user's id
-            self.user_df.index = [item for item in self.user_df['ID']] 
-            #convert dataframe into dict to asynchronously write it to a csv file
-            self.user_dictionary = self.user_df.to_dict()
-            await self.update_csv()
+        # #conditions for if there are values in the file
+        if id in self.user_dictionary.keys():
+            #create nested dict
+            self.user_dictionary[id] = {}
+            #update nested dict
+            self.user_dictionary[id]['id'] = id
+            self.user_dictionary[id]['name'] = name
         
-        elif not self.user_dictionary:
-            #create new pandas, convert into dict, write to csv
-            self.user_df = pd.DataFrame(self.user_df.append({"ID": str(id), "Name": name, "Live_Key": '', "Live_Secret": '', "Paper_Key": '', "Paper_Secret": ''}, ignore_index=True))
-            #set the index to the user's id
-            self.user_df.index = [item for item in self.user_df['ID']]
-            #convert dataframe into dict to asynchronously write it to a csv file
-            self.user_dictionary = self.user_df.to_dict()
-            await self.update_csv()
+    
+        elif id not in self.user_dictionary.keys():
+            #create nested dict
+            self.user_dictionary[id] = {}
+            #update nested dict
+            self.user_dictionary[id]['id'] = id
+            self.user_dictionary[id]['name'] = name
+        
+        await self.update_csv()
         
         
     
@@ -48,16 +46,14 @@ class Member_Alpaca_Data():
 
         #read in the full file and convert the dictionary into a pandas df
         await self.read_csv()
-        self.user_df = pd.DataFrame.from_records(self.user_dictionary)
+        
         #update the user's keys by indexing their id number.
-        self.user_df.at[id, 'Live_Key'] = str(live_key)
-        self.user_df.at[id, 'Live_Secret'] = str(live_secret)
-        self.user_df.at[id, 'Paper_Key'] = str(paper_key)
-        self.user_df.at[id, 'Paper_Secret'] = str(paper_secret)
+        self.user_dictionary[id]['Live_Key'] = (live_key)
+        self.user_dictionary[id]['Live_Secret'] = (live_secret)
+        self.user_dictionary[id]['Paper_Key'] = (paper_key)
+        self.user_dictionary[id]['Paper_Secret'] = (paper_secret)
         
         #convert dataframe into dict to asynchronously write it to a csv file
-        self.user_dictionary = self.user_df.to_dict()
-        print(self.user_df)
         await self.update_csv()
         
     
@@ -65,6 +61,9 @@ class Member_Alpaca_Data():
     async def read_csv(self):
         async with aiofiles.open('members_alpaca.csv', 'r') as f:
             self.user_dictionary = await f.read()
+            
+            if not self.user_dictionary:
+                self.user_dictionary = dict(self.user_dictionary)
             if self.user_dictionary:
                 self.user_dictionary = json.loads(self.user_dictionary)
             return self.user_dictionary
@@ -79,7 +78,7 @@ class Member_Alpaca_Data():
 if __name__ == '__main__':
     users = Member_Alpaca_Data()
     # print(users.user_df)
-    asyncio.run(users.update_id(str(125), 'george'))
+    # asyncio.run(users.update_id(126, 'george'))
     # asyncio.run(users.update_id(str(126), 'george'))
     # # print('\n')
     asyncio.run(users.update_keys(str(125), 1, 1, 1, 1))
@@ -89,3 +88,26 @@ if __name__ == '__main__':
     # print(users.updated_df('gg'))
     # print(users.user_df)
     # asyncio.run(users.read_csv())
+
+# def update_id(id, name):
+#     '''This class will be called when a user first joins the server, it will capture their name and id'''
+#     user_dictionary = {}
+#     #conditions for if there are values in the file
+#     if id in user_dictionary.keys():
+#         #create nested dict
+#         user_dictionary[id] = {}
+#         #update nested dict
+#         user_dictionary[id]['id'] = id
+#         user_dictionary[id]['name'] = name
+        
+    
+#     elif id not in user_dictionary.keys():
+#         #create nested dict
+#         user_dictionary[id] = {}
+#         #update nested dict
+#         user_dictionary[id]['id'] = id
+#         user_dictionary[id]['name'] = name
+    
+#     print(user_dictionary)
+
+# update_id('george', 'geo')
