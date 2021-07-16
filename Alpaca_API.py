@@ -16,7 +16,7 @@ class Alpaca_Account:
         self.paper_headers = {'APCA-API-KEY-ID': self.paper_key, 'APCA-API-SECRET-KEY': self.paper_secret}
         self.live_url = 'https://api.alpaca.markets'
         self.paper_url = 'https://paper-api.alpaca.markets'
-        self.responses_dict = {} #universal dict for storing responses to send back to user
+        self.response_dict = {} #universal dict for storing responses to send back to user
         #response data for the json responses of our different functions
         self.entry_price = ''
         self.side = ''
@@ -47,6 +47,7 @@ class Alpaca_Account:
         async with aiohttp.ClientSession(headers=self.live_headers) as session:
             async with session.get(url) as resp:
                 response = await resp.json()
+                self.response_dict = response
                 self.bid_price = response['quote']['bp']
                 self.ask_price = response['quote']['ap']
     
