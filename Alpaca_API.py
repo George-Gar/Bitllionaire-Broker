@@ -123,14 +123,14 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                     async with session.get(f'{self.live_url}/v2/positions/{symbol.upper()}') as resp:
                         response = await resp.json()
-                        print(response)
+                        self.response_dict = response
         
         #paper account
         if live == False:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.get(f'{self.paper_url}/v2/positions/{symbol.upper()}') as resp:
                         response = await resp.json()
-                        p.pprint(response)
+                        self.response_dict = response
         
         self.entry_price = float(response['avg_entry_price'])
         self.side = response['side']
@@ -355,5 +355,5 @@ class Alpaca_Account:
 
 if __name__ == '__main__':
     a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.get_account(live=False))
+    asyncio.run(a.get_position('aapl',live=False))
     # asyncio.run(a.cancel_order('aapl',live=False))
