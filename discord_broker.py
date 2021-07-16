@@ -1,5 +1,6 @@
 from discord.ext.commands.core import command
 from discord.ext import commands
+import discord
 from Alpaca_API import Alpaca_Account
 from Member_Dataframe import Member_Alpaca_Data
 
@@ -46,7 +47,19 @@ async def account(ctx, live=True):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     await broker.get_account(live=live)
-    return
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict:
+        broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+    
+    #send the embed
+    await ctx.message.author.send(embed=broker_embed)
 
 
 
