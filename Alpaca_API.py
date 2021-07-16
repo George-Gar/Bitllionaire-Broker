@@ -6,9 +6,8 @@ from config import *
 class Alpaca_Account:
     '''This class will have everything to do with the users account including placing orders'''
 
-    def __init__(self, member_id, live_key, live_secret, paper_key, paper_secret):
+    def __init__(self, live_key, live_secret, paper_key, paper_secret):
         #initialize variable with params/args
-        self.member_id = member_id
         self.live_key = live_key
         self.live_secret = live_secret
         self.paper_key = paper_key
@@ -34,14 +33,14 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                     async with session.get(f'{self.live_url}/v2/account') as resp:
                         response = await resp.json()
-                        
+                        self.response_dict = response 
         
         elif live == False:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.get(f'{self.paper_url}/v2/account') as resp:
                         response = await resp.json()
-        self.response_dict = response             
-            
+                        self.response_dict = response 
+        print(self.response_dict)                      
     
 
     async def get_quote(self, symbol):
@@ -353,6 +352,6 @@ class Alpaca_Account:
 
 
 if __name__ == '__main__':
-    a = Alpaca_Account(1, l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.send_order('buy', 'aapl', 5, live=False))
-    asyncio.run(a.cancel_order('aapl',live=False))
+    a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
+    asyncio.run(a.get_account(live=False))
+    # asyncio.run(a.cancel_order('aapl',live=False))
