@@ -39,8 +39,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.get(f'{self.paper_url}/v2/account') as resp:
                         response = await resp.json()
-                        self.response_dict = response 
-        print(self.response_dict)                      
+                        self.response_dict = response                       
     
 
     async def get_quote(self, symbol):
