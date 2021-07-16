@@ -14,7 +14,9 @@ class Member_Alpaca_Data():
 
     #update rows, index, and values
     async def update_id(self, id, name):
-        '''This class will be called when a user first joins the server, it will capture their name and id'''
+        '''This class will be called when a user first joins the server, it will capture their name and id when this is run in
+         discord they key will be the string version of the id because the key is always a string. within that
+        will be the "id" key which will have the integer value of the id because it is originally an int via discord.'''
 
         await self.read_csv()
         

@@ -31,7 +31,7 @@ async def add(ctx, live_key, live_secret, paper_key, paper_secret):
     member = Member_Alpaca_Data()
     #create the author object
     author = ctx.message.author
-    await member.update_keys(author.id, live_key, live_secret, paper_key, paper_secret)
+    await member.update_keys(str(author.id), live_key, live_secret, paper_key, paper_secret)
     return
 
 
