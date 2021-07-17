@@ -100,18 +100,17 @@ class Alpaca_Account:
    
     async def get_orders(self, status='open', live=True):
 
-        data = {'status': status}
         #live account
         if live == True:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
-                    async with session.get(f'{self.live_url}/v2/orders', json=data) as resp:
+                    async with session.get(f'{self.live_url}/v2/orders?status={status}') as resp:
                         self.order_response = await resp.json()
                         p.pprint(self.order_response)
         
         #paper account
         if live == False:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
-                    async with session.get(f'{self.paper_url}/v2/orders', json=data) as resp:
+                    async with session.get(f'{self.paper_url}/v2/orders?status={status}') as resp:
                         self.order_response = await resp.json()
                         p.pprint(self.order_response)
         
@@ -355,5 +354,5 @@ class Alpaca_Account:
 
 if __name__ == '__main__':
     a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.get_position('aapl',live=False))
+    asyncio.run(a.get_orders('closed',live=False))
     # asyncio.run(a.cancel_order('aapl',live=False))
