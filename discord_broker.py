@@ -17,6 +17,7 @@ async def buy(ctx):
     print(member.user_dictionary) 
     return
 
+#database commands
 @client.command(name='add')
 async def add(ctx):
     #create instance of member_alpaca_data class
@@ -35,6 +36,7 @@ async def add(ctx, live_key, live_secret, paper_key, paper_secret):
     await member.update_keys(str(author.id), live_key, live_secret, paper_key, paper_secret)
     return
 
+#broker commands
 @client.command(name='account')
 async def account(ctx):
     '''This functions gets the alpaca account. the parameters mirror the ones from our alpaca module'''
@@ -190,6 +192,68 @@ async def orders(ctx, status='open'):
         await ctx.message.author.send(embed=broker_embed)
         # break
         
+@client.command(name='order')
+async def order(ctx, id):
+    '''This functions gets the alpaca account. the parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    #route to the correct channel
+    if ctx.channel.id == 863095775407505478:
+        await broker.get_order(id=id, live=True)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.get_order(id=id, live=False)
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict: #Loop through each key in the dict
+        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+
+    #send the embed
+    await ctx.message.channel.send(embed=broker_embed)
+
+@client.command(name='asset')
+async def asset(ctx, symbol):
+    '''This functions gets the alpaca account. the parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    #route to the correct channel
+    if ctx.channel.id == 863095775407505478:
+        await broker.get_asset(symbol=symbol, live=True)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.get_asset(symbol=symbol, live=False)
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict:
+        if broker.response_dict[key]:
+            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+
+    #send the embed
+    await ctx.message.channel.send(embed=broker_embed)
+
 
 
 #run client on server
