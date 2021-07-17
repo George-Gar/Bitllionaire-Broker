@@ -329,6 +329,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                     async with session.delete(f'{self.live_url}/v2/orders') as resp:
                         response = await resp.json()
+                        self.response_dict = response
                         print(response)
         
         #paper account
@@ -336,6 +337,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.delete(f'{self.paper_url}/v2/orders') as resp:
                         response = await resp.json()
+                        self.response_dict = response
                         print(response)
 
 
@@ -366,5 +368,5 @@ class Alpaca_Account:
 
 if __name__ == '__main__':
     a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.get_order('4d8eb2bc-b647-4e83-92b0-22a1f5313646',live=False))
+    asyncio.run(a.cancel_orders(live=False))
     # asyncio.run(a.cancel_order('aapl',live=False))
