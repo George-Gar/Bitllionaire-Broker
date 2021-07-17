@@ -22,7 +22,7 @@ class Alpaca_Account:
         self.side = ''
         self.shares = ''
         self.order_id = ''
-        self.order_response = '' #for get orders to loop through responses to get orders and their ids
+        self.order_response = [] #for get orders to loop through responses to get_orders and their ids
 
 
     async def get_account(self, live=True):
@@ -114,6 +114,14 @@ class Alpaca_Account:
                         self.order_response = await resp.json()
                         p.pprint(self.order_response)
         
+        if not self.order_response:
+            if status == 'closed':
+                self.order_response = [{'orders': 'You have 0 closed orders'}]
+            elif status == 'open':
+                self.order_response = [{'orders': 'You have 0 open orders'}]
+            elif status == 'all':
+                self.order_response = [{'orders': 'You have neither any open or closed orders'}]
+
 
     async def get_position(self, symbol, live=True):
 
