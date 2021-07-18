@@ -9,13 +9,6 @@ client = commands.Bot(command_prefix='!')
 bit_screener = client.get_channel(842046148108746803)
 
 #write the bot functionality
-@client.command(name='buy')
-async def buy(ctx):
-    #create instance of member_alpaca_data class
-    member = Member_Alpaca_Data()
-    await member.read_csv()
-    print(member.user_dictionary) 
-    return
 
 #database commands
 @client.command(name='add')
@@ -128,7 +121,6 @@ async def positions(ctx):
         
         #send the embed
         await ctx.message.author.send(embed=broker_embed)
-
 
 @client.command(name='position')
 async def position(ctx, symbol):
@@ -363,13 +355,131 @@ async def close(ctx, symbol='None', qty=''): #no symbol we call cancel_orders, i
         #send the embed
         await ctx.message.channel.send(embed=broker_embed)
 
+@client.command(name='buy')
+async def buy(ctx, symbol, qty, limit='', tif='gtc'):
+    '''This functions places a buy order. The parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    if ctx.channel.id == 863095775407505478:
+        await broker.send_order('buy', symbol=symbol, qty=qty, limit=limit, tif=tif, live=True)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.send_order('buy', symbol=symbol, qty=qty, limit=limit, tif=tif, live=False)
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+    
+    #send the embed
+    await ctx.message.author.send(embed=broker_embed)
 
+@client.command(name='sell')
+async def sell(ctx, symbol, qty, limit='', tif='gtc'):
+    '''This functions places a buy order. The parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    if ctx.channel.id == 863095775407505478:
+        await broker.send_order('sell', symbol=symbol, qty=qty, limit=limit, tif=tif, live=True)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.send_order('sell', symbol=symbol, qty=qty, limit=limit, tif=tif, live=False)
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+    
+    #send the embed
+    await ctx.message.author.send(embed=broker_embed)
 
+@client.command(name='stop')
+async def stop(ctx, symbol, stop_perc, qty='', tif='gtc'):
+    '''This functions places a buy order. The parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    if ctx.channel.id == 863095775407505478:
+        await broker.stop_loss(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=True)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.stop_loss(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=False)
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add the entry price
+    if broker.entry_price:
+        broker_embed.add_field(name='Avg_Entry_Price', value=f'{broker.entry_price}\n', inline=False)
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+    
+    #send the embed
+    await ctx.message.author.send(embed=broker_embed)
 
-
-
-
-
+@client.command(name='take')
+async def take(ctx, symbol, stop_perc, qty='', tif='gtc'):
+    '''This functions places a buy order. The parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    if ctx.channel.id == 863095775407505478:
+        await broker.take_profit(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=True)
+    elif ctx.channel.id == 863095208819294278:
+        await broker.take_profit(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=False)
+    
+    #create the embed
+    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+    for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    
+    #add the entry price
+    if broker.entry_price:
+        broker_embed.add_field(name='Avg_Entry_Price', value=f'{broker.entry_price}\n', inline=False)
+    #add footer and thumbnail
+    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+    text="The Bitllionaire's Club. Formula-X LLC")
+    
+    #send the embed
+    await ctx.message.author.send(embed=broker_embed)
 
 
 

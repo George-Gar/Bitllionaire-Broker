@@ -52,50 +52,34 @@ class Alpaca_Account:
                 self.ask_price = response['quote']['ap']
     
 
-    async def send_order(self, side, symbol, qty, limit = 0, tif = 'gtc', live = True):
+    async def send_order(self, side, symbol, qty, limit = '', tif = 'gtc', live = True):
         
-        #get price data
-        await self.get_quote(symbol.upper())
         #if limit isn't specified it will default as a market order
-        if limit == 0:
-            data = {'symbol': symbol.upper(), 'qty': qty, 'side': side, 'type': 'market', 'time_in_force': tif}
+        if limit == '':
+            data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'market', 'time_in_force': tif}
         else:
-            data = {'symbol': symbol.upper(), 'qty': qty, 'side': side, 'type': 'limit', 'time_in_force': tif, 'limit_price': limit}
+            data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'limit', 'time_in_force': tif, 'limit_price': float(limit)}
         
         #live account post request
         if live == True: 
             url = f'{self.live_url}/v2/orders'
-            
-            if side == 'sell':
-                async with aiohttp.ClientSession(headers=self.live_headers) as session:
-                    async with session.post(url, json=data) as resp:
-                        response = await resp.json() 
-                        self.entry_price = self.bid_price
-                        print(response)                          
-            elif side == 'buy':
-                async with aiohttp.ClientSession(headers=self.live_headers) as session:
-                    async with session.post(url, json=data) as resp:
-                        response = await resp.json()
-                        self.entry_price = self.ask_price
-                        print(response)
+
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                async with session.post(url, json=data) as resp:
+                    response = await resp.json()
+                    self.response_dict = response
+                    print(response)
                
         
         #paper account post request
         elif live == False:
             url = f'{self.paper_url}/v2/orders'
-            
-            if side == 'sell':
-                async with aiohttp.ClientSession(headers=self.paper_headers) as session:
-                    async with session.post(url, json=data) as resp:
-                        response = await resp.json() 
-                        self.entry_price = self.bid_price
-                        print(response)
-            elif side == 'buy':
-                async with aiohttp.ClientSession(headers=self.paper_headers) as session:
-                    async with session.post(url, json=data) as resp:
-                        response = await resp.json()
-                        self.entry_price = self.ask_price
-                        print(response)
+                        
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                async with session.post(url, json=data) as resp:
+                    response = await resp.json()
+                    self.response_dict = response
+                    print(response)
 
    
     async def get_orders(self, status='open', live=True):
@@ -253,58 +237,24 @@ class Alpaca_Account:
                         print(response)
 
 
-    async def stop_loss(self, symbol, qty, stop_perc, tif = 'gtc', live = True):
-        
-        #check information on open position. This will make self.entry_price == the avg entry price in the position
-        await self.get_position(symbol.upper(), live)
-        
-        #adjust json data based on position info
-        if self.side == 'long':
-            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'sell', 'type': 'stop', 'time_in_force': tif,
-                    'stop_price': self.entry_price * stop_perc }
-        elif self.side == 'short':
-            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'buy', 'type': 'stop', 'time_in_force': tif, 
-                    'stop_price': self.entry_price * stop_perc }
-         
-         ###
-            
-        #live account post request
-        if live == True: 
-            url = f'{self.live_url}/v2/orders'
-        
-            async with aiohttp.ClientSession(headers=self.live_headers) as session:
-                async with session.post(url, json=data) as resp:
-                    response = await resp.json() 
-                    print(response)                          
-
-        #paper account post request
-        elif live == False:
-            url = f'{self.paper_url}/v2/orders'
-
-            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
-                async with session.post(url, json=data) as resp:
-                    response = await resp.json() 
-                    print(response)
-
-
-    async def take_profit(self, symbol, stop_perc, qty='all', tif = 'gtc', live = True):
+    async def stop_loss(self, symbol, stop_perc, qty='', tif = 'gtc', live = True):
         
         #check information on open position. This will make self.entry_price == the avg entry price in the position
         await self.get_position(symbol.upper(), live)
 
         #if elif statement to decide between default amount of shares to take profit or a selected amount
-        if qty == 'all':
+        if qty == '':
             qty = self.shares
-        elif qty != 'all':
-            qty = qty
+        elif qty != '':
+            qty = float(qty)
         
-        #adjust json data based on position info
+        #adjust json data based on position side info
         if self.side == 'long':
-            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'sell', 'type': 'limit', 'time_in_force': tif,
-                    'limit_price': self.entry_price * stop_perc }
+            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'sell', 'type': 'stop', 'time_in_force': tif,
+                    'stop_price': self.entry_price * float(stop_perc) }
         elif self.side == 'short':
-            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'buy', 'type': 'limit', 'time_in_force': tif, 
-                    'limit_price': self.entry_price * stop_perc }
+            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'buy', 'type': 'stop', 'time_in_force': tif, 
+                    'stop_price': self.entry_price * float(stop_perc) }
          
          ###
             
@@ -315,6 +265,49 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                 async with session.post(url, json=data) as resp:
                     response = await resp.json() 
+                    self.response_dict = response
+                    print(response)                          
+
+        #paper account post request
+        elif live == False:
+            url = f'{self.paper_url}/v2/orders'
+
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                async with session.post(url, json=data) as resp:
+                    response = await resp.json()
+                    self.response_dict = response 
+                    print(response)
+
+
+    async def take_profit(self, symbol, stop_perc, qty='', tif = 'gtc', live = True):
+        
+        #check information on open position. This will make self.entry_price == the avg entry price in the position
+        await self.get_position(symbol.upper(), live)
+
+        #if elif statement to decide between default amount of shares to take profit or a selected amount
+        if qty == '':
+            qty = self.shares
+        elif qty != '':
+            qty = float(qty)
+        
+        #adjust json data based on position info
+        if self.side == 'long':
+            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'sell', 'type': 'limit', 'time_in_force': tif,
+                    'limit_price': self.entry_price * float(stop_perc) }
+        elif self.side == 'short':
+            data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'buy', 'type': 'limit', 'time_in_force': tif, 
+                    'limit_price': self.entry_price * float(stop_perc) }
+         
+         ###
+            
+        #live account post request
+        if live == True: 
+            url = f'{self.live_url}/v2/orders'
+        
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                async with session.post(url, json=data) as resp:
+                    response = await resp.json() 
+                    self.response_dict = response
                     print(response)                          
 
         #paper account post request
@@ -324,6 +317,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                 async with session.post(url, json=data) as resp:
                     response = await resp.json() 
+                    self.response_dict = response
                     print(response)
 
 
@@ -372,5 +366,5 @@ class Alpaca_Account:
 
 if __name__ == '__main__':
     a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.close_all_positions(live=False))
+    asyncio.run(a.send_order('buy', 'aapl', 2, 240, live=False))
     # asyncio.run(a.cancel_order('aapl',live=False))
