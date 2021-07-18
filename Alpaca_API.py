@@ -163,14 +163,14 @@ class Alpaca_Account:
                         p.pprint(response)
 
 
-    async def close_position(self, symbol, qty=0, live=True):
+    async def close_position(self, symbol, qty='', live=True):
             
             #live account
             if live == True:
 
-                if '%' not in str(qty) and qty != 0:
+                if '%' not in str(qty) and qty != '':
                     url = f'{self.live_url}/v2/positions/{symbol.upper()}?qty={qty}'
-                elif '%' in str(qty) and qty != 0:
+                elif '%' in str(qty) and qty != '':
                     url = f'{self.live_url}/v2/positions/{symbol.upper()}?percentage={qty.strip("%")}'
                 else:
                     url = f'{self.live_url}/v2/positions/{symbol.upper()}'
@@ -178,14 +178,15 @@ class Alpaca_Account:
                 async with aiohttp.ClientSession(headers=self.live_headers) as session:
                         async with session.delete(url) as resp:
                             response = await resp.json()
+                            self.response_dict = response
                             print(response)
             
             #paper account
             if live == False:
 
-                if '%' not in str(qty) and qty != 0:
+                if '%' not in str(qty) and qty != '':
                     url = f'{self.paper_url}/v2/positions/{symbol.upper()}?qty={qty}'
-                elif '%' in str(qty) and qty != 0:
+                elif '%' in str(qty) and qty != '':
                     url = f'{self.paper_url}/v2/positions/{symbol.upper()}?percentage={qty.strip("%")}'
                 else:
                     url = f'{self.paper_url}/v2/positions/{symbol.upper()}'
@@ -193,6 +194,7 @@ class Alpaca_Account:
                 async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                         async with session.delete(url) as resp:
                             response = await resp.json()
+                            self.response_dict = response
                             p.pprint(response)
 
 
@@ -203,6 +205,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.live_headers) as session:
                     async with session.delete(f'{self.live_url}/v2/positions') as resp:
                         response = await resp.json()
+                        self.response_dict = response
                         print(response)
         
         #paper account
@@ -210,6 +213,7 @@ class Alpaca_Account:
             async with aiohttp.ClientSession(headers=self.paper_headers) as session:
                     async with session.delete(f'{self.paper_url}/v2/positions') as resp:
                         response = await resp.json()
+                        self.response_dict = response
                         p.pprint(response)
 
 
@@ -368,5 +372,5 @@ class Alpaca_Account:
 
 if __name__ == '__main__':
     a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.cancel_orders(live=False))
+    asyncio.run(a.close_all_positions(live=False))
     # asyncio.run(a.cancel_order('aapl',live=False))

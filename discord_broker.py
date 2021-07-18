@@ -266,7 +266,7 @@ async def cancel(ctx, symbol='None'): #no symbol we call cancel_orders, if they 
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     
-    if symbol == 'None':
+    if symbol == 'None': #for no specific symbol we call cancel orders plural.
         if ctx.channel.id == 863095775407505478:
             await broker.cancel_orders(live=True)
         elif ctx.channel.id == 863095208819294278:
@@ -288,7 +288,7 @@ async def cancel(ctx, symbol='None'): #no symbol we call cancel_orders, if they 
             #send the embed
             await ctx.message.author.send(embed=broker_embed)
     
-    elif symbol != 'None':
+    elif symbol != 'None': #for a specific symbol we call cancel order singular.
         #route to the correct channel
         if ctx.channel.id == 863095775407505478:
             await broker.cancel_order(symbol=symbol, live=True)
@@ -307,6 +307,76 @@ async def cancel(ctx, symbol='None'): #no symbol we call cancel_orders, if they 
 
         #send the embed
         await ctx.message.channel.send(embed=broker_embed)
+
+@client.command(name='close')
+async def close(ctx, symbol='None', qty=''): #no symbol we call cancel_orders, if they provide symbol we call cancel_order
+    '''This functions gets the alpaca account. the parameters mirror the ones from our alpaca module'''
+    
+    #create instance of member_alpaca_data class and read in the dataframe
+    member = Member_Alpaca_Data()
+    await member.read_csv()
+    #create the author object
+    author = ctx.message.author
+    #create the broker object
+    broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
+    
+    if symbol == 'None': #for no specific symbol we call close_positions plural.
+        if ctx.channel.id == 863095775407505478:
+            await broker.close_all_positions(live=True)
+        elif ctx.channel.id == 863095208819294278:
+            await broker.close_all_positions(live=False)
+        
+        #create a for loop that parses the response and creates the embed
+        for item in broker.response_dict:
+            broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+            broker_embed.add_field(name='symbol', value=f'{item["symbol"]}\n', inline=False) #grab the id since its stored in seperate key
+            for key in item['body']: #Loop through each key for each item in the dict
+                if item['body'][key]: #if the key and value exist add it to the field to avoid errors
+                    broker_embed.add_field(name=key, value=f'{item["body"][key]}\n', inline=False)
+    
+            #add footer and thumbnail
+            broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+            broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+            text="The Bitllionaire's Club. Formula-X LLC")
+            
+            #send the embed
+            await ctx.message.author.send(embed=broker_embed)
+    
+    elif symbol != 'None': #for a specific symbol we call close_position singular.
+        #route to the correct channel
+        if ctx.channel.id == 863095775407505478:
+            await broker.close_position(symbol=symbol, qty=qty, live=True)
+        elif ctx.channel.id == 863095208819294278:
+            await broker.close_position(symbol=symbol, qty=qty, live=False)
+        
+        #create the embed
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+            if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+                broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+        
+        #add footer and thumbnail
+        broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+        broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+        text="The Bitllionaire's Club. Formula-X LLC")
+
+        #send the embed
+        await ctx.message.channel.send(embed=broker_embed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #run client on server
