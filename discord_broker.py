@@ -356,7 +356,7 @@ async def close(ctx, symbol='None', qty=''): #no symbol we call cancel_orders, i
         await ctx.message.channel.send(embed=broker_embed)
 
 @client.command(name='buy')
-async def buy(ctx, symbol, qty, limit='', tif='gtc'):
+async def buy(ctx, symbol, qty, take_profit='', stop_loss='', limit='', tif='gtc'):
     '''This functions places a buy order. The parameters mirror the ones from our alpaca module'''
     
     #create instance of member_alpaca_data class and read in the dataframe
@@ -367,26 +367,61 @@ async def buy(ctx, symbol, qty, limit='', tif='gtc'):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     if ctx.channel.id == 863095775407505478:
-        await broker.send_order('buy', symbol=symbol, qty=qty, limit=limit, tif=tif, live=True)
+        await broker.send_order('buy', symbol=symbol, qty=qty, take_profit=take_profit, stop_loss=stop_loss, limit=limit, tif=tif, live=True)
     elif ctx.channel.id == 863095208819294278:
-        await broker.send_order('buy', symbol=symbol, qty=qty, limit=limit, tif=tif, live=False)
+        await broker.send_order('buy', symbol=symbol, qty=qty, take_profit=take_profit, stop_loss=stop_loss, limit=limit, tif=tif, live=False)
     
-    #create the embed
-    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
-    for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
-        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
-            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    if not take_profit and not stop_loss:
+        #create the embed
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+            if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+                broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+        
+        #add footer and thumbnail
+        broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+        broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+        text="The Bitllionaire's Club. Formula-X LLC")
+        
+        #send the embed
+        await ctx.message.author.send(embed=broker_embed)
     
-    #add footer and thumbnail
-    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
-    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
-    text="The Bitllionaire's Club. Formula-X LLC")
+    elif take_profit and stop_loss:
+        #loop through each response in the list
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for key in broker.response_dict:
+            if key == 'legs': #skip if the key == legs
+                continue
+            if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+                broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
     
-    #send the embed
-    await ctx.message.author.send(embed=broker_embed)
+        #add footer and thumbnail
+        broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+        broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+        text="The Bitllionaire's Club. Formula-X LLC")
+        
+        #send the embed
+        await ctx.message.author.send(embed=broker_embed)
+
+        #loop through each key in the legs list of the response
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for keys in broker.response_dict: #change to keys cause one of the keys holds a list
+            if keys == 'legs': #loop through the keys and add to embed
+                for item in broker.response_dict[keys]: #item is each dictionary within the list of the 'legs' key
+                    for key in item: #key is each key of the item dictionary
+                        if item[key]: #if the key and value exist add it to the field to avoid errors
+                            broker_embed.add_field(name=key, value=f'{item[key]}\n', inline=False)
+        
+                    #add footer and thumbnail
+                    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+                    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+                    text="The Bitllionaire's Club. Formula-X LLC")
+
+                    #send the embed
+                    await ctx.message.author.send(embed=broker_embed)
 
 @client.command(name='sell')
-async def sell(ctx, symbol, qty, limit='', tif='gtc'):
+async def sell(ctx, symbol, qty, take_profit='', stop_loss='', limit='', tif='gtc'):
     '''This functions places a buy order. The parameters mirror the ones from our alpaca module'''
     
     #create instance of member_alpaca_data class and read in the dataframe
@@ -397,23 +432,58 @@ async def sell(ctx, symbol, qty, limit='', tif='gtc'):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     if ctx.channel.id == 863095775407505478:
-        await broker.send_order('sell', symbol=symbol, qty=qty, limit=limit, tif=tif, live=True)
+        await broker.send_order('sell', symbol=symbol, qty=qty, limit=limit, take_profit=take_profit, stop_loss=stop_loss, tif=tif, live=True)
     elif ctx.channel.id == 863095208819294278:
-        await broker.send_order('sell', symbol=symbol, qty=qty, limit=limit, tif=tif, live=False)
+        await broker.send_order('sell', symbol=symbol, qty=qty, limit=limit, take_profit=take_profit, stop_loss=stop_loss, tif=tif, live=False)
     
-    #create the embed
-    broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
-    for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
-        if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
-            broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+    if not take_profit and not stop_loss:
+        #create the embed
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
+            if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+                broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
+        
+        #add footer and thumbnail
+        broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+        broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+        text="The Bitllionaire's Club. Formula-X LLC")
+        
+        #send the embed
+        await ctx.message.author.send(embed=broker_embed)
     
-    #add footer and thumbnail
-    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
-    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
-    text="The Bitllionaire's Club. Formula-X LLC")
+    elif take_profit and stop_loss:
+        #loop through each response in the list
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for key in broker.response_dict:
+            if key == 'legs': #skip if the key == legs
+                continue
+            if broker.response_dict[key]: #if the key and value exist add it to the field to avoid errors
+                broker_embed.add_field(name=key, value=f'{broker.response_dict[key]}\n', inline=False)
     
-    #send the embed
-    await ctx.message.author.send(embed=broker_embed)
+        #add footer and thumbnail
+        broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+        broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+        text="The Bitllionaire's Club. Formula-X LLC")
+        
+        #send the embed
+        await ctx.message.author.send(embed=broker_embed)
+
+        #loop through each key in the legs list of the response
+        broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
+        for keys in broker.response_dict: #change to keys cause one of the keys holds a list
+            if keys == 'legs': #loop through the keys and add to embed
+                for item in broker.response_dict[keys]: #item is each dictionary within the list of the 'legs' key
+                    for key in item: #key is each key of the item dictionary
+                        if item[key]: #if the key and value exist add it to the field to avoid errors
+                            broker_embed.add_field(name=key, value=f'{item[key]}\n', inline=False)
+        
+                    #add footer and thumbnail
+                    broker_embed.set_thumbnail(url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png')
+                    broker_embed.set_footer(icon_url='https://cdn.discordapp.com/attachments/792763798645637130/849786769687314482/imgbin_bitcoin-cash-cryptocurrency-bitcoin-gold-ethereum-png.png', 
+                    text="The Bitllionaire's Club. Formula-X LLC")
+
+                    #send the embed
+                    await ctx.message.author.send(embed=broker_embed)
 
 @client.command(name='stop')
 async def stop(ctx, symbol, stop_perc, qty='', tif='gtc'):

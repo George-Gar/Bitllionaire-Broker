@@ -52,13 +52,25 @@ class Alpaca_Account:
                 self.ask_price = response['quote']['ap']
     
 
-    async def send_order(self, side, symbol, qty, limit = '', tif = 'gtc', live = True):
+    async def send_order(self, side, symbol, qty, take_profit='', stop_loss='', limit = '', tif = 'gtc', live = True):
         
-        #if limit isn't specified it will default as a market order
-        if not limit:
+        #if limit, take, or stop arent specified it will default as a market order with not take or stop price
+        if not limit and not stop_loss and not take_profit:
             data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'market', 'time_in_force': tif}
-        else:
-            data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'limit', 'time_in_force': tif, 'limit_price': float(limit)}
+        #limit order without take profit or stop price
+        elif limit and not stop_loss and not take_profit:
+            data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'limit', 'time_in_force': tif, 
+            'limit_price': float(limit)}
+        #if limit not spcified but take and loss are it will be a market bracket order
+        elif not limit and stop_loss and take_profit:
+            data = { "side": side, "symbol": symbol.upper(), "type": "market", "qty": float(qty), "time_in_force": tif,   
+            "order_class": "bracket", "take_profit": {"limit_price": take_profit},   
+            "stop_loss": {"stop_price": stop_loss} }
+        #if limit take and stop are specified it will be a limit bracker order
+        elif limit and stop_loss and take_profit:
+            data = { "side": side, "symbol": symbol.upper(), "type": "limit", "qty": float(qty), "time_in_force": tif,   
+            'limit_price': float(limit), "order_class": "bracket", "take_profit": {"limit_price": take_profit},   
+            "stop_loss": {"stop_price": stop_loss} }
         
         #live account post request
         if live == True: 
@@ -79,7 +91,7 @@ class Alpaca_Account:
                 async with session.post(url, json=data) as resp:
                     response = await resp.json()
                     self.response_dict = response
-                    print(response)
+                    p.pprint(response)
 
    
     async def get_orders(self, status='open', live=True):
