@@ -55,7 +55,7 @@ class Alpaca_Account:
     async def send_order(self, side, symbol, qty, limit = '', tif = 'gtc', live = True):
         
         #if limit isn't specified it will default as a market order
-        if limit == '':
+        if not limit:
             data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'market', 'time_in_force': tif}
         else:
             data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'limit', 'time_in_force': tif, 'limit_price': float(limit)}
@@ -365,6 +365,9 @@ class Alpaca_Account:
 
 
 if __name__ == '__main__':
-    a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    asyncio.run(a.send_order('buy', 'aapl', 2, 240, live=False))
-    # asyncio.run(a.cancel_order('aapl',live=False))
+    lim = ''
+    if not lim:
+        print('hello')
+    # a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
+    # asyncio.run(a.send_order('buy', 'aapl', 2, 240, live=False))
+    # # asyncio.run(a.cancel_order('aapl',live=False))
