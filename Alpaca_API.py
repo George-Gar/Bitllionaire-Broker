@@ -58,7 +58,7 @@ class Alpaca_Account:
         if not limit and not stop_loss and not take_profit:
             data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'market', 'time_in_force': tif}
         #limit order without take profit or stop price
-        elif limit and not stop_loss and not take_profit:
+        elif take_profit and not stop_loss and not limit: #if just the take profit is specified this means they want to place a limit order
             data = {'symbol': symbol.upper(), 'qty': float(qty), 'side': side, 'type': 'limit', 'time_in_force': tif, 
             'limit_price': float(limit)}
         #if limit not spcified but take and loss are it will be a market bracket order
