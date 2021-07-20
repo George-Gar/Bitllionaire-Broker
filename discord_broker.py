@@ -483,7 +483,7 @@ async def sell(ctx, symbol, qty, limit='', stop_loss='', take_profit='', tif='gt
         elif limit and stop_loss and not take_profit:#bracket market order with stops and takes limit=take_profit & vice verse
             await broker.send_order('sell', symbol=symbol, qty=qty, take_profit=stop_loss, stop_loss=limit, limit=take_profit, tif=tif, live=False)
     
-    if not take_profit and not stop_loss:
+    if not limit and not stop_loss:#limit is the take_profit so if not a bracket order
         #create the embed
         broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
         for key in broker.response_dict: #loop through each key/value in the response and add them to the embed
@@ -498,7 +498,7 @@ async def sell(ctx, symbol, qty, limit='', stop_loss='', take_profit='', tif='gt
         #send the embed
         await ctx.message.author.send(embed=broker_embed)
     
-    elif take_profit and stop_loss:
+    elif limit and stop_loss:#limit is the take_profit so if a bracket order
         #loop through each response in the list
         broker_embed = discord.Embed(title=f'Bitllionaire Broker', description='Brokerage Account', color=0x00ff00)
         for key in broker.response_dict:
