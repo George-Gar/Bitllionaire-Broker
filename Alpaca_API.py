@@ -375,11 +375,60 @@ class Alpaca_Account:
                         print(response)
 
 
+    async def trailing_stop(self, symbol, stop_amt, qty='', tif = 'gtc', live = True):
+        
+        #check information on open position. This will make self.entry_price == the avg entry price in the position
+        await self.get_position(symbol.upper(), live)
+
+        #if elif statement to decide between default amount of shares to take profit or a selected amount
+        if qty == '':
+            qty = self.shares
+        elif qty != '':
+            qty = float(qty)
+        
+        #adjust json data based on position side info
+        if self.side == 'long':
+            if '%' in str(stop_amt):
+                data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'sell', 'type': 'trailing_stop', 'time_in_force': tif,
+                        'trail_percent': float(stop_amt.strip('%')) }
+            elif '%' not in str(stop_amt):
+                data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'sell', 'type': 'trailing_stop', 'time_in_force': tif,
+                        'trail_price': float(stop_amt) }
+        elif self.side == 'short':
+            if '%' in str(stop_amt):
+                data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'buy', 'type': 'trailing_stop', 'time_in_force': tif,
+                        'trail_percent': float(stop_amt.strip('%')) }
+            elif '%' not in str(stop_amt):
+                data = {'symbol': symbol.upper(), 'qty': qty, 'side': 'buy', 'type': 'trailing_stop', 'time_in_force': tif,
+                        'trail_price': float(stop_amt) }
+         
+         ###
+            
+        #live account post request
+        if live == True: 
+            url = f'{self.live_url}/v2/orders'
+        
+            async with aiohttp.ClientSession(headers=self.live_headers) as session:
+                async with session.post(url, json=data) as resp:
+                    response = await resp.json() 
+                    self.response_dict = response
+                    print(response)                          
+
+        #paper account post request
+        elif live == False:
+            url = f'{self.paper_url}/v2/orders'
+
+            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+                async with session.post(url, json=data) as resp:
+                    response = await resp.json()
+                    self.response_dict = response 
+                    print(response)
+
 
 if __name__ == '__main__':
-    lim = ''
-    if not lim:
-        print('hello')
-    # a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
-    # asyncio.run(a.send_order('buy', 'aapl', 2, 240, live=False))
-    # # asyncio.run(a.cancel_order('aapl',live=False))
+    # lim = ''
+    # if not lim:
+    #     print('hello')
+    a = Alpaca_Account(l_key, l_secret, p_key, p_secret)
+    asyncio.run(a.trailing_stop('aapl', '.95%', live=False))
+    # asyncio.run(a.cancel_order('aapl',live=False))
