@@ -417,12 +417,15 @@ class Alpaca_Account:
         #paper account post request
         elif live == False:
             url = f'{self.paper_url}/v2/orders'
+            r = requests.post(url, headers=self.paper_headers, json=data)
+            resp = r.json()
+            print(resp)
 
-            async with aiohttp.ClientSession(headers=self.paper_headers) as session:
-                async with session.post(url, json=data) as resp:
-                    response = await resp.json()
-                    self.response_dict = response 
-                    print(response)
+            # async with aiohttp.ClientSession(headers=self.paper_headers) as session:
+            #     async with session.post(url, json=data) as resp:
+            #         response = await resp.json()
+            #         self.response_dict = response 
+            #         print(response)
 
 
 if __name__ == '__main__':
