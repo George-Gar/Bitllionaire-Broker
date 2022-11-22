@@ -6,7 +6,7 @@ from Member_Dataframe import Member_Alpaca_Data
 
 #create the discord client as well as important channel variables
 client = commands.Bot(command_prefix='!')
-bit_screener = client.get_channel(842046148108746803)
+bit_screener = client.get_channel(#insert discord token here)
 
 #write the bot functionality
 
@@ -41,9 +41,9 @@ async def account(ctx):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.get_account(live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_account(live=False)
     
     #create the embed
@@ -71,9 +71,9 @@ async def quote(ctx, symbol):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     #route to the correct channel
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.get_quote(symbol=symbol)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_quote(symbol=symbol)
     
     #create the embed
@@ -103,9 +103,9 @@ async def positions(ctx):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.get_all_positions(live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_all_positions(live=False)
     
     #create a for loop that parses the response and creates the embed
@@ -134,9 +134,9 @@ async def position(ctx, symbol):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     #route to the correct channel
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.get_position(symbol=symbol, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_position(symbol=symbol, live=False)
     
     #create the embed
@@ -163,9 +163,9 @@ async def orders(ctx, status='open'):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id ==#insert discord token here:
         await broker.get_orders(status=status, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_orders(status=status, live=False)
     
     #create a for loop that parses the response and creates the embed
@@ -196,9 +196,9 @@ async def order(ctx, id):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     #route to the correct channel
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.get_order(id=id, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_order(id=id, live=False)
     
     #create the embed
@@ -227,9 +227,9 @@ async def asset(ctx, symbol):
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     #route to the correct channel
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.get_asset(symbol=symbol, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.get_asset(symbol=symbol, live=False)
     
     #create the embed
@@ -259,9 +259,9 @@ async def cancel(ctx, symbol='None'): #no symbol we call cancel_orders, if they 
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     
     if symbol == 'None': #for no specific symbol we call cancel orders plural.
-        if ctx.channel.id == 863095775407505478:
+        if ctx.channel.id == #insert discord token here:
             await broker.cancel_orders(live=True)
-        elif ctx.channel.id == 863095208819294278:
+        elif ctx.channel.id == #insert discord token here:
             await broker.cancel_orders(live=False)
         
         #create a for loop that parses the response and creates the embed
@@ -282,9 +282,9 @@ async def cancel(ctx, symbol='None'): #no symbol we call cancel_orders, if they 
     
     elif symbol != 'None': #for a specific symbol we call cancel order singular.
         #route to the correct channel
-        if ctx.channel.id == 863095775407505478:
+        if ctx.channel.id == #insert discord token here:
             await broker.cancel_order(symbol=symbol, live=True)
-        elif ctx.channel.id == 863095208819294278:
+        elif ctx.channel.id == #insert discord token here:
             await broker.cancel_order(symbol=symbol, live=False)
         
         #create the embed
@@ -313,9 +313,9 @@ async def close(ctx, symbol='None', qty=''): #no symbol we call cancel_orders, i
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     
     if symbol == 'None': #for no specific symbol we call close_positions plural.
-        if ctx.channel.id == 863095775407505478:
+        if ctx.channel.id == #insert discord token here:
             await broker.close_all_positions(live=True)
-        elif ctx.channel.id == 863095208819294278:
+        elif ctx.channel.id == #insert discord token here:
             await broker.close_all_positions(live=False)
         
         #create a for loop that parses the response and creates the embed
@@ -336,9 +336,9 @@ async def close(ctx, symbol='None', qty=''): #no symbol we call cancel_orders, i
     
     elif symbol != 'None': #for a specific symbol we call close_position singular.
         #route to the correct channel
-        if ctx.channel.id == 863095775407505478:
+        if ctx.channel.id == #insert discord token here:
             await broker.close_position(symbol=symbol, qty=qty, live=True)
-        elif ctx.channel.id == 863095208819294278:
+        elif ctx.channel.id == #insert discord token here:
             await broker.close_position(symbol=symbol, qty=qty, live=False)
         
         #create the embed
@@ -367,7 +367,7 @@ async def buy(ctx, symbol, qty, limit='', stop_loss='', take_profit='', tif='gtc
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     #live
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         if not take_profit and not stop_loss and not limit:#regular market order
             await broker.send_order('buy', symbol=symbol, qty=qty, take_profit=take_profit, stop_loss=stop_loss, limit=limit, tif=tif, live=True)
         elif limit and not stop_loss and not take_profit:#if only take profit inputed they want a limit order
@@ -377,7 +377,7 @@ async def buy(ctx, symbol, qty, limit='', stop_loss='', take_profit='', tif='gtc
         elif limit and stop_loss and not take_profit:#bracket market order with stops and takes limit=take_profit & vice verse
             await broker.send_order('buy', symbol=symbol, qty=qty, take_profit=stop_loss, stop_loss=limit, limit=take_profit, tif=tif, live=True)
     #paper
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         if not take_profit and not stop_loss and not limit:#regular market order
             await broker.send_order('buy', symbol=symbol, qty=qty, take_profit=take_profit, stop_loss=stop_loss, limit=limit, tif=tif, live=False)
         elif limit and not stop_loss and not take_profit:#if only take profit inputed they want a limit order
@@ -463,7 +463,7 @@ async def sell(ctx, symbol, qty, limit='', stop_loss='', take_profit='', tif='gt
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
     #live
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         if not take_profit and not stop_loss and not limit:#regular market order
             await broker.send_order('sell', symbol=symbol, qty=qty, take_profit=take_profit, stop_loss=stop_loss, limit=limit, tif=tif, live=True)
         elif limit and not stop_loss and not take_profit:#if only take profit inputed they want a limit order
@@ -473,7 +473,7 @@ async def sell(ctx, symbol, qty, limit='', stop_loss='', take_profit='', tif='gt
         elif limit and stop_loss and not take_profit:#bracket market order with stops and takes limit=take_profit & vice verse
             await broker.send_order('sell', symbol=symbol, qty=qty, take_profit=stop_loss, stop_loss=limit, limit=take_profit, tif=tif, live=True)
     #paper
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         if not take_profit and not stop_loss and not limit:#regular market order
             await broker.send_order('sell', symbol=symbol, qty=qty, take_profit=take_profit, stop_loss=stop_loss, limit=limit, tif=tif, live=False)
         elif limit and not stop_loss and not take_profit:#if only take profit inputed they want a limit order
@@ -558,9 +558,9 @@ async def stop(ctx, symbol, stop_perc, qty='', tif='gtc'):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.stop_loss(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.stop_loss(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=False)
     
     #create the embed
@@ -591,9 +591,9 @@ async def take(ctx, symbol, stop_perc, qty='', tif='gtc'):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.take_profit(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.take_profit(symbol=symbol, stop_perc=stop_perc, qty=qty, tif=tif, live=False)
     
     #create the embed
@@ -624,9 +624,9 @@ async def trailing_stop(ctx, symbol, stop_amt, qty='', tif='gtc'):
     author = ctx.message.author
     #create the broker object
     broker = Alpaca_Account(member.user_dictionary[str(author.id)]['Live_Key'],member.user_dictionary[str(author.id)]['Live_Secret'],member.user_dictionary[str(author.id)]['Paper_Key'],member.user_dictionary[str(author.id)]['Paper_Secret'])
-    if ctx.channel.id == 863095775407505478:
+    if ctx.channel.id == #insert discord token here:
         await broker.trailing_stop(symbol=symbol, stop_amt=stop_amt, qty=qty, tif=tif, live=True)
-    elif ctx.channel.id == 863095208819294278:
+    elif ctx.channel.id == #insert discord token here:
         await broker.trailing_stop(symbol=symbol, stop_amt=stop_amt, qty=qty, tif=tif, live=False)
     
     #create the embed
@@ -651,4 +651,4 @@ async def trailing_stop(ctx, symbol, stop_amt, qty='', tif='gtc'):
 
 
 #run client on server
-client.run('ODY0OTk4MjA3OTI5NzEyNjQw.YO9mWw.7elqzkaRwMOwk57Uouw23SH8qdc')
+client.run(#insert client token)
